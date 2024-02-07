@@ -1,0 +1,3 @@
+﻿  ReseauxConnection.cpp
+D:\SVN\Eleves\pcarles\ProjetPerso\testChatGPTCode\serveur\serveur\ReseauxConnection.cpp(26,23): warning C4244: '=' : conversion de 'SOCKET' en 'int', perte possible de données
+  serveur.vcxproj -> D:\SVN\Eleves\pcarles\ProjetPerso\testChatGPTCode\serveur\x64\Debug\serveur.exe

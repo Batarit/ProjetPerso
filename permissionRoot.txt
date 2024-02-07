@@ -1,0 +1,21 @@
+GRANT USAGE ON *.* TO 'Serveur'@'%';
+
+GRANT ALL PRIVILEGES ON `meuporg`.* TO 'Serveur'@'%';
+
+GRANT SELECT ON `meuporg`.`map` TO 'Serveur'@'%';
+
+GRANT SELECT ON `meuporg`.`race` TO 'Serveur'@'%';
+
+GRANT SELECT ON `meuporg`.`runes` TO 'Serveur'@'%';
+
+GRANT SELECT, INSERT ON `meuporg`.`joueurs` TO 'Serveur'@'%';
+
+GRANT SELECT, INSERT ON `meuporg`.`mail` TO 'Serveur'@'%';
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON `meuporg`.`perso` TO 'Serveur'@'%';
+
+GRANT SELECT, INSERT, UPDATE (nom) ON `meuporg`.`guildes` TO 'Serveur'@'%';
+
+GRANT SELECT ON `meuporg`.`mapliaison` TO 'Serveur'@'%';
+
+GRANT SELECT ON `meuporg`.`passif` TO 'Serveur'@'%';
