@@ -156,6 +156,8 @@ void MyMSG(CommandServeur* serv, PlayerStruct* player)
 
 			std::cout << "0- delete\t\t1- accept\t\t2- nothing\n" << std::endl;
 
+			std::cin >> answer;
+
 			if (answer == '0')
 			{
 				request = "DELETE FROM `mail` WHERE id = " + idMsg[choix - 1];
@@ -165,8 +167,16 @@ void MyMSG(CommandServeur* serv, PlayerStruct* player)
 			else if (answer == '1')
 			{
 
-				request = "UPDATE `perso` SET `id_guild`=" + std::to_string(std::stoi(commande)) + " WHERE id = " + std::to_string(player->character.id) + ";";
-				request += "UPDATE `mail` SET command = ' ' WHERE id = " + idMsg[choix - 1];
+				if (commande.find("IG") != std::string::npos)
+				{
+					request = "UPDATE `perso` SET `id_guild`=" + std::to_string(std::stoi(commande)) + " WHERE id = " + std::to_string(player->character.id) + ";";
+					request += "UPDATE `mail` SET command = ' ' WHERE id = " + idMsg[choix - 1];
+				}
+				if (commande.find("IF") != std::string::npos)
+				{
+					request = "INSERT INTO `friendlist` (`id`, `idP1`, `idP2`) VALUES (NULL, '" + std::to_string(std::stoi(commande)) + "', '" + std::to_string(player->character.id) + "');";
+				}
+
 
 				serv->Request(request.c_str());
 				serv->FreeResult();
@@ -281,7 +291,7 @@ void Invitation(CommandServeur* serv, PlayerStruct* player)
 		}
 		else if (answer == '3')
 		{
-			MSGTo(serv, player, GUILD, "If" + player->character.id);
+			MSGTo(serv, player, GUILD, "IF" + player->character.id);
 		}
 		else if (answer == '4')
 		{

@@ -129,7 +129,7 @@ void PlayerConnect(CommandServeur* serv, PlayerStruct* player)
 	}
 
 	serv->FreeResult();
-	request = "SELECT * FROM `joueurs` WHERE `name` = '" + pseudo + "' AND `adresse mail` = '" + password + "'";
+	request = "SELECT * FROM `joueurs` WHERE `name` = '" + pseudo + "' AND `password` = '" + password + "'";
 	serv->Request(request.c_str());
 	while (serv->GetRow())
 	{

@@ -20,7 +20,7 @@ int main()
 {
 
 	PlayerStruct player;
-	GameMode gameMode = CHARACTER;
+	GameMode gameMode = CONNECTION;
 	CommandServeur serv;
 	std::string error = serv.ConnectBDD("127.0.0.1");
 

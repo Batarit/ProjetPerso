@@ -7,12 +7,13 @@
 #define PORT_S 5232
 
 
+class string;
 
 struct addresseClients
 {
 	int size = 10;
 	int actualPose = 0;
-	std::vector<struct sockaddr_in*> addrOuts;
+	std::vector<struct sockaddr_in> addrOuts;
 	void Connection(char* _addrOut);
 	void DisConnection(char* _addrOut);
 	std::vector<char> nbMessage;
@@ -25,18 +26,25 @@ public:
 	~ReseauxConnection();
 
 private:
-	int socketS;
-	struct sockaddr_in* addrIn;
+	SOCKET socketS;
+	struct sockaddr_in addrIn;
 	addresseClients addrOutClients;
-	char buf[BUFLEN];
-	struct WSAData* wsa;
+	std::string* buf;
+	struct WSAData wsa;
 	int slen = sizeof(addrOutClients);;
+	char nbOfMessage = 0;
 
 public:
 
 	void SendMSGR(int who, const char* msg);
+	void ThreadSendMSGR(int who, const char* msg);
 
 	void SendMSG(int who);
+	void ThreadSendMSG(int who);
 
 	void Reiceived();
+	void ThreadReiceived();
+
+	void SetBuffer(char msgT, const char* msg);
+
 };

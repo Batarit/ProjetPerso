@@ -1,4 +1,2 @@
 ﻿  clien.cpp
-D:\SVN\Eleves\pcarles\ProjetPerso\testChatGPTCode\clien\clien\clien.cpp(66,6): warning C4267: 'argument' : conversion de 'size_t' en 'int', perte possible de données
-D:\SVN\Eleves\pcarles\ProjetPerso\testChatGPTCode\clien\clien\clien.cpp(86,7): warning C4101: 'buf' : variable locale non référencée
-  clien.vcxproj -> D:\SVN\Eleves\pcarles\ProjetPerso\testChatGPTCode\clien\x64\Debug\clien.exe
+  clien.vcxproj -> D:\SVN\Eleves\pcarles\ProjetPerso\ProjetPerso\testChatGPTCode\clien\x64\Debug\clien.exe

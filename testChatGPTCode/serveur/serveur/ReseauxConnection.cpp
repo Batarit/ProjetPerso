@@ -12,10 +12,10 @@
 
 ReseauxConnection::ReseauxConnection()
 {
-
+	buf = new std::string;
 	//Initialise winsock
 	printf("\nInitialising Winsock...");
-	if (WSAStartup(MAKEWORD(2, 2), wsa) != 0)
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 	{
 		printf("Failed. Error Code : %d", WSAGetLastError());
 		exit(EXIT_FAILURE);
@@ -29,27 +29,32 @@ ReseauxConnection::ReseauxConnection()
 	}
 	printf("Socket created.\n");
 
-	//setup address structure
-	for (int i = 0; i < 100; i++)
-	{
 
-	}
 	//Prepare the sockaddr_in structure
-	addrIn->sin_family = AF_INET;
-	addrIn->sin_addr.s_addr = INADDR_ANY;
-	addrIn->sin_port = htons(PORT_R);
+	addrIn.sin_family = AF_INET;
+	addrIn.sin_addr.s_addr = INADDR_ANY;
+	addrIn.sin_port = htons(PORT_R);
+	//Bind
+	if (bind(socketS, (struct sockaddr*)&addrIn, sizeof(addrIn)) == SOCKET_ERROR)
+	{
+		printf("Bind failed with error code : %d", WSAGetLastError());
+		exit(EXIT_FAILURE);
+	}
 }
 
 ReseauxConnection::~ReseauxConnection()
 {
+	delete buf;
+	closesocket(socketS);
+	WSACleanup();
 }
 
 void ReseauxConnection::SendMSGR(int who, const char* msg)
 {
 	if (who < addrOutClients.addrOuts.size())
 	{
-		std::cout << "tu envoie quoi " << buf << std::endl;
-		if (sendto(socketS, msg, 2, 0, (struct sockaddr*)&addrOutClients.addrOuts[who], slen) == SOCKET_ERROR)
+		std::cout << "tu envoie quoi " << msg << std::endl;
+		if (sendto(socketS, msg, sizeof(msg[0]) * (BUFLEN-1), 0, (struct sockaddr*)&addrOutClients.addrOuts[who], slen) == SOCKET_ERROR)
 		{
 			printf("sendto() failed with error code : %d", WSAGetLastError());
 			exit(EXIT_FAILURE);
@@ -57,13 +62,19 @@ void ReseauxConnection::SendMSGR(int who, const char* msg)
 	}
 }
 
+void ReseauxConnection::ThreadSendMSGR(int who, const char* msg)
+{
+	std::thread(&ReseauxConnection::SendMSGR, this, who, msg).detach();
+}
+
 void ReseauxConnection::SendMSG(int who)
 {
-	char* buffer = buf;
+	const char* buffer = buf->c_str();
 	int32_t count = 0;
 	if (who < addrOutClients.addrOuts.size())
 	{
-		while (count <= INT32_MAX || addrOutClients.nbMessage[who] != buffer[1])
+		ThreadReiceived();
+		while (count <= INT32_MAX && addrOutClients.nbMessage[who] != buffer[1])
 		{
 
 			if (sendto(socketS, buffer, BUFLEN, 0, (struct sockaddr*)&addrOutClients.addrOuts[who], slen) == SOCKET_ERROR)
@@ -77,15 +88,19 @@ void ReseauxConnection::SendMSG(int who)
 	}
 }
 
+void ReseauxConnection::ThreadSendMSG(int who)
+{
+	std::thread(&ReseauxConnection::SendMSG, this, who).detach();
+}
+
 void ReseauxConnection::Reiceived()
 {
-	struct sockaddr_in temp = *addrOutClients.addrOuts[0];
+	struct sockaddr_in temp;
 	char buf[BUFLEN];
 	////receive a reply and print it
 ////clear the buffer by filling null, it might have previously received data
 	////try to receive some data, this is a blocking call
-	while (true)
-	{
+
 
 		printf("Waiting for data...");
 		fflush(stdout);
@@ -95,55 +110,69 @@ void ReseauxConnection::Reiceived()
 			printf("recvfrom() failed with error code : %d", WSAGetLastError());
 			exit(EXIT_FAILURE);
 		}
+		ThreadReiceived();
 		int i = 0;
 		while (i < addrOutClients.addrOuts.size())
 		{
-			if ((struct sockaddr*)&addrOutClients.addrOuts[i] == (struct sockaddr*)&temp)
+			if (addrOutClients.addrOuts[i].sin_addr.S_un.S_addr == temp.sin_addr.S_un.S_addr)
 			{
 				break;
 			}
 			i++;
 		}
-		if (i < addrOutClients.addrOuts.size())
+
+		if (buf[0] == 'R' && i < addrOutClients.addrOuts.size())
 		{
-
-			if (buf[0] == 'R')
-			{
-				addrOutClients.nbMessage[i] = buf[1];
-			}
-			else if (buf[0] == 'S')
-			{
-				std::cout << "SEND!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-				//print details of the client/peer and the data received
-				//printf("Received packet from %s:%d\n", inet_ntoa(dm->si_other.sin_addr), ntohs(dm->si_other.sin_port));
-				//printf("Data: %s\n", buf);
-				std::string message = "R";
-				message += buf[1];
-
-
-				SendMSGR(i, message.c_str());
-			}
-			printf("Received packet from %s:%d\n", inet_ntoa(temp.sin_addr), ntohs(temp.sin_port));
-			printf("Data: %s\n", buf);
+			addrOutClients.nbMessage[i] = buf[1];
 		}
-		else if (buf[0] == 'C')
+		else if (buf[0] == 'S' && i < addrOutClients.addrOuts.size())
 		{
-			addrOutClients.Connection(inet_ntoa(temp.sin_addr));
+			std::cout << "SEND!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+
+			std::string message = "R";
+			message += buf[1];
+
+
+			ThreadSendMSGR(i, message.c_str());
 		}
-		else if (buf[0] == 'D')
+		else if (buf[0] == 'D' && i < addrOutClients.addrOuts.size())
 		{
 			addrOutClients.DisConnection(inet_ntoa(temp.sin_addr));
 		}
-	}
+		else if (buf[0] == 'C')
+		{
+			std::cout << "\nconnection " << i << " size befor conection " << addrOutClients.addrOuts.size() << std::endl;
+			addrOutClients.Connection(inet_ntoa(temp.sin_addr));
+			std::cout << "size after conection " << addrOutClients.addrOuts.size() << std::endl;
+			std::string message = "R";
+			message += buf[1];
+			SendMSGR(addrOutClients.addrOuts.size() - 1, message.c_str());
+		}
+		printf("Received packet from %s:%d\n", inet_ntoa(temp.sin_addr), ntohs(temp.sin_port));
+		printf("Data: %s\n", buf);
+}
+
+void ReseauxConnection::ThreadReiceived()
+{
+	std::thread(&ReseauxConnection::Reiceived, this).detach();
+}
+
+void ReseauxConnection::SetBuffer(char msgT, const char* msg)
+{
+	*buf = &msgT;
+	*buf += nbOfMessage;
+	*buf += msg;
+	nbOfMessage++;
+
 }
 
 void addresseClients::Connection(char* _addrOut)
 {
-	struct sockaddr_in* temp;
+	struct sockaddr_in temp;
 	memset((char*)&temp, 0, sizeof(temp));
-	temp->sin_family = AF_INET;
-	temp->sin_port = htons(PORT_S);
-	temp->sin_addr.S_un.S_addr = inet_addr(_addrOut);
+	temp.sin_family = AF_INET;
+	temp.sin_port = htons(PORT_S);
+	temp.sin_addr.S_un.S_addr = inet_addr(_addrOut);
 	addrOuts.push_back(temp);
 	nbMessage.push_back(-1);
 
@@ -151,14 +180,14 @@ void addresseClients::Connection(char* _addrOut)
 
 void addresseClients::DisConnection(char* _addrOut)
 {
-	struct sockaddr_in* temp;
+	struct sockaddr_in temp;
 	memset((char*)&temp, 0, sizeof(temp));
-	temp->sin_family = AF_INET;
-	temp->sin_port = htons(PORT_S);
-	temp->sin_addr.S_un.S_addr = inet_addr(_addrOut);
+	temp.sin_family = AF_INET;
+	temp.sin_port = htons(PORT_S);
+	temp.sin_addr.S_un.S_addr = inet_addr(_addrOut);
 	for (size_t i = 0; i < addrOuts.size(); i++)
 	{
-		if (temp == addrOuts[i])
+		if (temp.sin_addr.S_un.S_addr == addrOuts[i].sin_addr.S_un.S_addr)
 		{
 			addrOuts.erase(addrOuts.begin() + i);
 			nbMessage.erase(nbMessage.begin() + i);
