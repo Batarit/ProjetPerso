@@ -22,11 +22,16 @@ int main()
 	PlayerStruct player;
 	GameMode gameMode = CONNECTION;
 	CommandServeur serv;
-	std::string error = serv.ConnectBDD("127.0.0.1");
+	std::string error = serv.ConnectBDD("133.133.7.79");
 
 	std::cout << error << std::endl;
 	system("PAUSE");
 
+	if (error != "")
+	{
+		return 1;
+	}
+	GetRune(&serv, &player);
 	while (gameMode != QUIT)
 	{
 		switch (gameMode)

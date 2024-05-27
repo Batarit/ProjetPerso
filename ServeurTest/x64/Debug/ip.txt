@@ -1,0 +1,11 @@
+
+Configuration IP de Windows
+
+
+Carte Ethernet Ethernet 2 :
+
+   Suffixe DNS propre … la connexion. . . : CREA.DOMAIN
+   Adresse IPv6 de liaison locale. . . . .: fe80::501b:5018:8fd4:b6ef%5
+   Adresse IPv4. . . . . . . . . . . . . .: 133.133.7.79
+   Masque de sous-r‚seau. . . .ÿ. . . . . : 255.255.0.0
+   Passerelle par d‚faut. . . .ÿ. . . . . : 133.133.1.25

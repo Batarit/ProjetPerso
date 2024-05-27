@@ -33,6 +33,12 @@
     <ClCompile Include="MessageFunction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Fight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConnectionOtherPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommandServeur.h">
@@ -42,6 +48,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="definition.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectionOtherPlayer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

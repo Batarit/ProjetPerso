@@ -17,3 +17,4 @@ void Game(CommandServeur* serv, PlayerStruct* player, GameMode* gameMode);
 
 void Message(CommandServeur* serv, PlayerStruct* player, GameMode* gameMode);
 
+void GetRune(CommandServeur* serv, PlayerStruct* player);

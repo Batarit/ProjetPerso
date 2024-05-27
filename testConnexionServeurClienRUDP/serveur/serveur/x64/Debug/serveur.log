@@ -1,0 +1,5 @@
+﻿  ReseauxConnection.cpp
+D:\SVN\Eleves\pcarles\ProjetPerso\ProjetPerso\testConnexionServeurClienRUDP\serveur\serveur\ReseauxConnection.cpp(168,55): warning C4267: 'argument' : conversion de 'size_t' en 'int', perte possible de données
+  serveur.cpp
+  Génération de code en cours...
+  serveur.vcxproj -> D:\SVN\Eleves\pcarles\ProjetPerso\ProjetPerso\testConnexionServeurClienRUDP\serveur\x64\Debug\serveur.exe

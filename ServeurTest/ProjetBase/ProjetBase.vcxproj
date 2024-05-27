@@ -148,13 +148,16 @@
     <ClCompile Include="CharacterFunction.cpp" />
     <ClCompile Include="CommandServeur.cpp" />
     <ClCompile Include="ConnectionFunction.cpp" />
+    <ClCompile Include="ConnectionOtherPlayer.cpp" />
     <ClCompile Include="InGameFunction.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MessageFunction.cpp" />
+    <ClCompile Include="Fight.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommandFunction.h" />
     <ClInclude Include="CommandServeur.h" />
+    <ClInclude Include="ConnectionOtherPlayer.h" />
     <ClInclude Include="definition.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -2,8 +2,46 @@
 #include "CommandFunction.h"
 
 #include "CommandServeur.h"
+#include <fstream>
 
+std::string getId()
+{
+	std::string line;
+	std::ifstream IPFile;
+	int offset;
+	const char* search0 = "Adresse IPv4. . . . . . . . . . . . . .:";      // search pattern
 
+	system("ipconfig > ip.txt");
+
+	IPFile.open("ip.txt");
+	if (IPFile.is_open())
+	{
+		while (!IPFile.eof())
+		{
+			std::getline(IPFile, line);
+			if ((offset = line.find(search0)) != std::string::npos)
+			{
+				//   IPv4 Address. . . . . . . . . . . : 1
+				//1234567890123456789012345678901234567890     
+				line.erase(0, 44);
+				std::string IP = line;
+				IPFile.close();
+				return line;
+			}
+		}
+	}
+	return "127.0.0.1";
+
+}
+
+void IsConnected(CommandServeur* serv, PlayerStruct* player)
+{
+	player->adressMail = getId();
+	std::string request;
+	request = "UPDATE `joueurs` SET `Adresse` = '" + player->adressMail + "' WHERE `joueurs`.`id` = " + player->idPlayer + ";";
+	serv->Request(request.c_str());
+	serv->FreeResult();
+}
 
 void NewPlayer(CommandServeur* serv, PlayerStruct* player)
 {
@@ -164,10 +202,13 @@ void Connection(CommandServeur* serv, PlayerStruct* player, GameMode* gameMode)
 	{
 		PlayerConnect(serv, player);
 		*gameMode = CHARACTER;
+
 	}
 	else if (answer == '2')
 	{
 		*gameMode = QUIT;
+		return;
 	}
+	IsConnected(serv, player);
 
 }

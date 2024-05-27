@@ -116,7 +116,9 @@ void CharacterSelection(CommandServeur* serv, PlayerStruct* player, GameMode* ga
 			player->character.lv = std::stoi(serv->Getvalue(2));
 			player->character.exp = std::stoi(serv->Getvalue(3));
 			player->character.hp = std::stoi(serv->Getvalue(4));
-			player->character.mana = std::stoi(serv->Getvalue(5));
+			player->character.ActualHp = player->character.hp;
+			player->character.manaMax = std::stoi(serv->Getvalue(5));
+			player->character.mana = player->character.manaMax;
 			player->character.Armor = std::stoi(serv->Getvalue(6));
 			player->character.logued = serv->Getvalue(7);
 			player->character.idRace = std::stoi(serv->Getvalue(9));

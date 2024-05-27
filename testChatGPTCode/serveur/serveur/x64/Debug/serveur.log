@@ -1,3 +1,0 @@
-﻿  ReseauxConnection.cpp
-D:\SVN\Eleves\pcarles\ProjetPerso\ProjetPerso\testChatGPTCode\serveur\serveur\ReseauxConnection.cpp(149,64): warning C4267: 'argument' : conversion de 'size_t' en 'int', perte possible de données
-  serveur.vcxproj -> D:\SVN\Eleves\pcarles\ProjetPerso\ProjetPerso\testChatGPTCode\serveur\x64\Debug\serveur.exe
